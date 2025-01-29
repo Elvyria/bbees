@@ -12,5 +12,7 @@ name=${PWD##*-}
 
 mkdir -p "${XDG_STATE_HOME}/snooze"
 
+[ -d "${TURNSTILE_ENV_DIR}" ] && ENV_DIR="chpst -e ${TURNSTILE_ENV_DIR}"
+
 exec nice -n 19 snooze ${OPTS} -t "${XDG_STATE_HOME}/snooze/${name}" -- sh -c \
-	"chpst -e ${TURNSTILE_ENV_DIR} run-parts ${XDG_DATA_HOME}/cron.${name}; : > ${XDG_STATE_HOME}/snooze/${name}"
+	"${ENV_DIR} run-parts ${XDG_DATA_HOME}/cron.${name}; : > ${XDG_STATE_HOME}/snooze/${name}"
