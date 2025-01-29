@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -efu
+
+. ./conf
+
+umount --quiet "${PROFILE_LINK}"
+
+# ATOMIC_RSYNC_OK_CODES='' atomic-rsync --archive --remove-source-files "${PROFILE_RUNTIME}/" "${PROFILE_PERSISTENT}/"
+# rsync --archive --remove-source-files "${CACHE_RUNTIME}/" "${CACHE_PERSISTENT}/"
+
+rm -r "${RUNTIME_DIR}"

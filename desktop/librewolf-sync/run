@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -efu
+
+. ./conf
+
+panic() { echo "${1}"; exit 1; }
+
+[ -d "${PROFILE_DIR}" ] || panic "browser profile directory doesn't exist"
+
+command -v atomic-rsync || panic "'atomic-rsync' coulnd't be found"
+command -v rsync        || panic "'rsync' couldn't be found"
+command -v bindfs       || panic "'bindfs' couldn't be found"
+
+if [ ! -r "${RUNTIME_DIR}" ]; then
+	mkdir -p -m0700 "${RUNTIME_DIR}"
+fi
+
+mkdir -p "${CACHE_PERSISTENT}"
+
+# atomic-rsync requirement
+if [ ! -L "${PROFILE_PERSISTENT}" ]; then
+	mv "${PROFILE_PERSISTENT}" "${PROFILE_DIR}/.${PROFILE_NAME}"
+	ln -s "${PROFILE_DIR}/.${PROFILE_NAME}" "${PROFILE_PERSISTENT}"
+fi
+
+# Profile
+[ -d "${PROFILE_RUNTIME}" ] && rm -r "${PROFILE_RUNTIME}"
+cp -a --reflink=auto -H "${PROFILE_PERSISTENT}" "${PROFILE_RUNTIME}"
+# rsync --archive --delete-before "${PROFILE_PERSISTENT}/" "${PROFILE_RUNTIME}/"
+
+# Cache
+[ -d "${CACHE_RUNTIME}" ] && rm -r "${CACHE_RUNTIME}"
+cp -a --reflink=auto "${CACHE_PERSISTENT}" "${CACHE_RUNTIME}" || true
+# rsync --archive --delete-before "${CACHE_PERSISTENT}/" "${CACHE_RUNTIME}/"
+
+# Bind
+mkdir -p "${PROFILE_LINK}"
+bindfs --multithreaded --enable-lock-forwarding --no-allow-other --enable-ioctl "${PROFILE_RUNTIME}" "${PROFILE_LINK}"
+
+while sleep "${SYNC_INTERVAL:-5m}"; do
+	ATOMIC_RSYNC_OK_CODES='' atomic-rsync --archive "${PROFILE_RUNTIME}/" "${PROFILE_PERSISTENT}/" || true
+	rsync --archive --delete-delay "${CACHE_RUNTIME}/" "${CACHE_PERSISTENT}/" || true
+done

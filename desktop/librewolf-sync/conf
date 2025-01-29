@@ -1,0 +1,13 @@
+# -*- mode: sh; -*-
+PROFILE_NAME='librewolf'
+SYNC_INTERVAL='5m'
+
+RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run}/${PROFILE_NAME}"
+
+PROFILE_DIR="${HOME}/documents/profiles"
+PROFILE_PERSISTENT="${PROFILE_DIR}/${PROFILE_NAME}"
+PROFILE_RUNTIME="${RUNTIME_DIR}/profile"
+PROFILE_LINK="${HOME}/.var/app/io.gitlab.librewolf-community/.${PROFILE_NAME}"
+
+CACHE_PERSISTENT="/mnt/shared/cache/${PROFILE_NAME}"
+CACHE_RUNTIME="${RUNTIME_DIR}/cache"
