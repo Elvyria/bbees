@@ -1,0 +1,20 @@
+#!/bin/sh
+
+[ -r conf ] && . ./conf
+
+APP="${APP:-io.gitlab.librewolf-community}"
+DRI_DIR="${DRI_DIR:-${HOME}/.var/app/${APP}/dri}"
+
+flatpak_unset() {
+	flatpak override --user --unset-env="${1}" "${APP}"
+}
+
+flatpak_unset 'LIBVA_DRIVER_NAME'
+flatpak_unset 'LIBVA_DRIVERS_PATH'
+flatpak_unset 'MOZ_DISABLE_RDD_SANDBOX'
+flatpak_unset 'NVD_BACKEND'
+
+umount --quiet "${DRI_DIR}"
+
+rm "${DRI_DIR}/nvidia_drv_video.so"
+rmdir "${DRI_DIR}"

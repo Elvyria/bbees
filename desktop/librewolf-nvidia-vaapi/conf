@@ -1,0 +1,3 @@
+# -*- mode: sh; -*-
+APP='io.gitlab.librewolf-community'
+DRI_DIR="${HOME}/.var/app/${APP}/dri"

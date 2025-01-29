@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -efu
+
+[ -r conf ] && . ./conf
+
+APP="${APP:-io.gitlab.librewolf-community}"
+DRI_DIR="${DRI_DIR:-${HOME}/.var/app/${APP}/dri}"
+
+flatpak_override() {
+	flatpak override --user --env="${1}=${2}" "${APP}"
+}
+
+flatpak_override 'LIBVA_DRIVER_NAME' 'nvidia'
+flatpak_override 'LIBVA_DRIVERS_PATH' "${DRI_DIR}"
+flatpak_override 'MOZ_DISABLE_RDD_SANDBOX' '1'
+flatpak_override 'NVD_BACKEND' 'direct'
+
+[ -d "${DRI_DIR}" ] || mkdir "${DRI_DIR}"
+
+if [ -x "$(command -v bindfs)" ]; then
+	exec bindfs -f --no-allow-other '/usr/lib/dri' "${DRI_DIR}"
+else
+	cp '/usr/lib/dri/nvidia_drv_video.so' "${DRI_DIR}"
+	exec pause
+fi
