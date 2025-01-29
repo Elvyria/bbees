@@ -1,0 +1,16 @@
+#!/bin/sh -f
+
+name=${PWD##*-}
+
+[ -r conf ] && . ./conf && [ -n "${OPTS}" ] || exit 1
+
+[ -z "${XDG_STATE_HOME}" ] && XDG_STATE_HOME=$(cat "${TURNSTILE_ENV_DIR}/XDG_STATE_HOME")
+[ -d "${XDG_STATE_HOME}" ] || exit 1
+
+[ -z "${XDG_DATA_HOME}" ] && XDG_DATA_HOME=$(cat "${TURNSTILE_ENV_DIR}/XDG_DATA_HOME")
+[ -d "${XDG_DATA_HOME}/cron.${name}" ] || exit 1
+
+mkdir -p "${XDG_STATE_HOME}/snooze"
+
+exec nice -n 19 snooze ${OPTS} -t "${XDG_STATE_HOME}/snooze/${name}" -- sh -c \
+	"chpst -e ${TURNSTILE_ENV_DIR} run-parts ${XDG_DATA_HOME}/cron.${name}; : > ${XDG_STATE_HOME}/snooze/${name}"
