@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -efu
+
+[ -r ./conf ] && . ./conf
+
+modprobe zram num_devices=0
+
+read -r devnum < /sys/class/zram-control/hot_add
+dev="/dev/zram${devnum}"
+ctl="/sys/block/zram${devnum}"
+
+echo "${devnum}" > "supervise/zram"
+
+echo 'algo=lzo-rle priority=1' > "${ctl}/recomp_algorithm"
+echo 'algo=deflate priority=2' > "${ctl}/recomp_algorithm"
+
+echo "${ALGORITHM:-lz4}" > "${ctl}/comp_algorithm"
+echo "${SIZE:-4096MiB}" > "${ctl}/disksize"
+
+echo 'type=idle' > "${ctl}/recompress"
+
+mkswap --quiet "${dev}" --label "zram${devnum}"
+swapon --discard --priority "${PRIORITY:-32767}" "${dev}"
+
+exec pause

@@ -1,0 +1,3 @@
+readonly ALGORITHM='zstd'
+readonly SIZE='4096MiB'
+readonly PRIORITY='32767'

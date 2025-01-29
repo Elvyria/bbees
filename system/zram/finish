@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ -r 'supervise/zram' ] || exit
+
+read -r devnum < supervise/zram
+
+[ "${devnum}" -ge 0 ] || exit
+
+swapoff -L "zram${devnum}"
+echo "${devnum}" > /sys/class/zram-control/hot_remove
+
+rm 'supervise/zram'
