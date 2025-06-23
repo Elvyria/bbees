@@ -1,0 +1,3 @@
+#!/bin/execlineb -P
+env XDG_RUNTIME_DIR=/var/lib
+brightnessctl --save

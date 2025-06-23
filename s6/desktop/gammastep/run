@@ -1,0 +1,3 @@
+#!/bin/execlineb -P
+importas -iS ENV_DIR
+s6-envdir ${ENV_DIR} gammastep -P -O 7000

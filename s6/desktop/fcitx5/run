@@ -1,0 +1,10 @@
+#!/bin/execlineb -P
+importas -S ENV_DIR
+s6-envdir ${ENV_DIR}
+
+importas -iS HOME
+importas -iS XDG_RUNTIME_DIR
+importas -iS WAYLAND_DISPLAY
+
+env -i HOME=${HOME} XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+fcitx5 --replace

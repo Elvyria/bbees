@@ -1,0 +1,10 @@
+#!/bin/execlineb -P
+importas -S ENV_DIR
+s6-envdir ${ENV_DIR}
+
+importas -i XDG_RUNTIME_DIR XDG_RUNTIME_DIR
+importas -i WAYLAND_DISPLAY WAYLAND_DISPLAY
+
+/usr/bin/env -i XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+
+/usr/bin/wl-paste --type image --watch cliphist store

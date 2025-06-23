@@ -1,0 +1,11 @@
+#!/bin/sh -f
+
+name=${PWD##*-}
+
+[ -r "/etc/s6/config/snooze-${name}.conf" ] && . "/etc/s6/config/snooze-${name}.conf"
+[ -n "${OPTS}" ] || exit 1
+
+mkdir -p "/var/lib/snooze"
+
+exec snooze ${OPTS} -t "/var/lib/snooze/${name}" -- sh -c \
+	"/usr/local/bin/run-stars /etc/cron.${name}; : > /var/lib/snooze/${name}"

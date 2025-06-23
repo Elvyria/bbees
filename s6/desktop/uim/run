@@ -1,0 +1,5 @@
+#!/bin/execlineb -P
+importas -S ENV_DIR
+s6-envdir ${ENV_DIR}
+
+uim-xim

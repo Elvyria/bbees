@@ -1,0 +1,8 @@
+#!/bin/execlineb -P
+
+importas -iS XDG_CONFIG_HOME
+
+define EWW_CONFIG_HOME ${XDG_CONFIG_HOME}/eww/bar
+export EWW_CONFIG_HOME ${EWW_CONFIG_HOME}
+
+/usr/local/bin/eww -c ${EWW_CONFIG_HOME} --no-daemonize open bar

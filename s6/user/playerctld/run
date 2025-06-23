@@ -1,0 +1,4 @@
+#!/bin/execlineb -P
+redirfd -w 1 /dev/null
+redirfd -w 2 /dev/null
+/usr/local/bin/playerctld

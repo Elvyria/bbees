@@ -1,0 +1,10 @@
+#!/bin/execlineb -P
+redirfd -w 1 /dev/null
+
+importas -iS ENV_DIR
+importas -iS XDG_CONFIG_HOME
+
+define EWW_CONFIG_HOME ${XDG_CONFIG_HOME}/eww/osd
+export EWW_CONFIG_HOME ${EWW_CONFIG_HOME}
+
+s6-envdir ${ENV_DIR} /usr/local/bin/eww -c ${EWW_CONFIG_HOME} --no-daemonize daemon

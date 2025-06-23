@@ -1,0 +1,23 @@
+#!/bin/execline -P
+envfile /etc/s6/config/zram.conf
+
+foreground { modprobe zram num_devices=0 }
+
+backtick -E DEVNUM { cat /sys/class/zram-control/hot_add }
+
+define DEV /dev/zram${DEVNUM}
+define CTL /sys/block/zram${DEVNUM}
+
+importas -SD "lz4" ALGORITHM
+importas -SD "4096MiB" SIZE
+importas -SD "32767" PRIORITY
+
+foreground { redirfd -w 1 "/run/zram.id" echo ${DEVNUM} }
+foreground { redirfd -w 1 ${CTL}/recomp_algorithm echo "algo=lzo-rle priority=1" }
+foreground { redirfd -w 1 ${CTL}/recomp_algorithm echo "algo=deflate priority=2" }
+foreground { redirfd -w 1 ${CTL}/comp_algorithm echo ${ALGORITHM} }
+foreground { redirfd -w 1 ${CTL}/disksize echo ${SIZE} }
+foreground { redirfd -w 1 ${CTL}/recompress echo "type=idle" }
+
+foreground { mkswap --quiet ${DEV} --label zram${DEVNUM} }
+swapon --discard --priority ${PRIORITY} ${DEV}

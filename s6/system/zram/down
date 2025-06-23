@@ -1,0 +1,13 @@
+#!/bin/execlineb -P
+envfile /etc/s6/config/zram.conf
+
+if { test -r /run/zram.id }
+
+backtick -E DEVNUM { cat /run/zram.id }
+
+if { test ${DEVNUM} -ge 0 }
+
+foreground { swapoff -L zram${DEVNUM} }
+foreground { redirfd -w 1 /sys/class/zram-control/hot_remove echo ${DEVNUM} }
+
+rm /run/zram.id

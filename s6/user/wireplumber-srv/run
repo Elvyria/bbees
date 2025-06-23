@@ -1,0 +1,4 @@
+#!/bin/execlineb -P
+importas -i XDG_RUNTIME_DIR XDG_RUNTIME_DIR
+fdmove -c 2 1
+wireplumber

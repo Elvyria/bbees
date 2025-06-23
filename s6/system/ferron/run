@@ -1,0 +1,39 @@
+#!/bin/sh
+
+anchors='/etc/ca-certificates/trust-source/anchors'
+cache='/var/cache/ferron'
+certs=${cache}/certs
+keys=${cache}/private
+
+duration=365
+size=2048
+
+ca() {
+	openssl req -x509 -newkey "rsa:${size}" -nodes -keyout "${keys}/ca.key" -out "${certs}/ca.crt" -days "${duration}" -subj "/CN=Ferron" -quiet >/dev/null 2>&1
+}
+
+cert() {
+	openssl req -newkey "rsa:${size}" -nodes -keyout "${keys}/.key" -out "${certs}/.csr" -subj "/CN=*.local" -addext basicConstraints=CA:FALSE -addext keyUsage=digitalSignature -addext extendedKeyUsage=serverAuth -addext "subjectAltName=$(domains)" -quiet >/dev/null 2>&1
+}
+
+sign() {
+	openssl x509 -in "${certs}/.csr" -req -copy_extensions copyall -out "${certs}/.crt"  -days ${duration} -CA "${certs}/ca.crt" -CAkey "${keys}/ca.key" -CAcreateserial >/dev/null 2>&1
+}
+
+domains() {
+	rg --no-filename -o -r 'DNS:$1' '([0-9A-Za-z.]+) *\{' /etc/ferron | paste -sd ',' -
+}
+
+if mkdir -m0755 -p "${cache}"; then
+	mkdir -m0755 -p "${certs}"
+	mkdir -m0700 -p "${keys}"
+
+	ca && cert && sign
+
+	if [ -d ${anchors} ]; then
+		install -m 0644 "${certs}/ca.crt" "${anchors}/Ferron_Local_Authority_Root.crt"
+		update-ca-trust
+	fi
+fi
+
+exec ferron -c /etc/ferron/ferron.kdl >/dev/null 2>&1

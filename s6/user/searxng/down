@@ -1,0 +1,2 @@
+#!/bin/execlineb -P
+podman stop SearXNG

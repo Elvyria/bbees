@@ -1,0 +1,13 @@
+#!/bin/execlineb -P
+importas -iS HOME
+importas -SD ${HOME}/.local/share XDG_DATA_HOME
+envfile ${XDG_DATA_HOME}/s6/config/pipewire.conf
+importas -sCuD "n3 s2000000 T" DIRECTIVES DIRECTIVES
+importas -SD ${HOME}/.local/state XDG_STATE_HOME
+ifelse { test -w ${XDG_STATE_HOME}/log } {
+	foreground { mkdir -p ${XDG_STATE_HOME}/log/pipewire }
+	exec -c s6-log -d3 -b -- ${DIRECTIVES} ${XDG_STATE_HOME}/log/pipewire
+}
+importas -iS XDG_RUNTIME_DIR
+foreground { mkdir -p ${XDG_RUNTIME_DIR}/log/pipewire }
+exec -c s6-log -d3 -b -- ${DIRECTIVES} ${XDG_RUNTIME_DIR}/log/pipewire

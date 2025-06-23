@@ -1,0 +1,2 @@
+#!/bin/execline -P
+flatpak run io.gitlab.news_flash.NewsFlash --headless

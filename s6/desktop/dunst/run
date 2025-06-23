@@ -1,0 +1,4 @@
+#!/bin/execlineb -P
+importas -iS ENV_DIR
+s6-envdir ${ENV_DIR}
+dunst -verbosity warn

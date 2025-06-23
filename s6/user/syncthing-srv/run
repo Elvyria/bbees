@@ -1,0 +1,3 @@
+#!/bin/execlineb -P
+fdmove -c 2 1
+syncthing serve --logflags=0 --no-browser --no-restart --no-upgrade

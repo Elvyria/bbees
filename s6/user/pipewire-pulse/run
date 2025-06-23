@@ -1,0 +1,3 @@
+#!/bin/execlineb -P
+importas -i XDG_RUNTIME_DIR XDG_RUNTIME_DIR
+pipewire-pulse

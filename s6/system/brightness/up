@@ -1,0 +1,3 @@
+#!/bin/execline -P
+env XDG_RUNTIME_DIR=/var/lib
+brightnessctl --restore

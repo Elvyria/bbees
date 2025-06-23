@@ -1,0 +1,21 @@
+#!/bin/execlineb -P
+importas -uS HOME
+importas -SD "{HOME}/.local/share" XDG_DATA_HOME
+envfile ${XDG_DATA_HOME}/s6/config/searxng.conf
+
+importas -SD "40649" LOCAL_PORT
+importas -SD "8080" PORT
+importas -SD "https://search.local/" URL
+importas -SD "Self-Hosted Search" NAME
+importas -SD "1" UWSGI_WORKERS
+importas -SD "1" UWSGI_THREADS
+
+redirfd -w 1 /dev/null
+redirfd -w 2 /dev/null
+podman run --replace --detach --name SearXNG
+-p ${LOCAL_PORT}:${PORT}
+-e BASE_URL=${URL}
+-e INSTANCE_NAME=${NAME}
+-e UWSGI_WORKERS=${UWSGI_WORKERS}
+-e UWSGI_THREADS=${UWSGI_THREADS}
+docker.io/searxng/searxng
