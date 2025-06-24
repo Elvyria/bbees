@@ -1,4 +1,4 @@
-# runit-candies
+# bbees / background bees
 Collection of useful service files for runit service manager.
 
 ## Dependencies
