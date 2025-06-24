@@ -1,9 +1,8 @@
 #!/bin/execlineb -P
-
 importas -S ENV_DIR
 s6-envdir ${ENV_DIR}
 
-importas -i XDG_RUNTIME_DIR XDG_RUNTIME_DIR
-if -t { test -r HYPRLAND_INSTANCE_SIGNATURE }
-importas -i HYPRLAND_INSTANCE_SIGNATURE HYPRLAND_INSTANCE_SIGNATURE
-test -d ${XDG_RUNTIME_DIR}/hypr/${HYPRLAND_INSTANCE_SIGNATURE}/hyprland.lock
+importas -iS XDG_RUNTIME_DIR
+if -t { importas -iS HYPRLAND_INSTANCE_SIGNATURE }
+importas -iS HYPRLAND_INSTANCE_SIGNATURE
+test -r ${XDG_RUNTIME_DIR}/hypr/${HYPRLAND_INSTANCE_SIGNATURE}/hyprland.lock
