@@ -1,5 +1,5 @@
 # bbees / background bees
-Collection of useful service files for runit service manager.
+Collection of service files.
 
 ## Dependencies
 - [ripgrep](https://github.com/BurntSushi/ripgrep) - to find text matches quicker
